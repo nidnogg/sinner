@@ -11,7 +11,7 @@ public:
                                           ///                       cout.flush(); It flushes the stream
 
     void show () 
-    { cout << "show base class" <<endl; }
+    { cout<< "show base class" <<endl; }
 
 };
 
