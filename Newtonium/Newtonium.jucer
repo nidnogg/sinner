@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="egBu2A" name="Newtonium" displaySplashScreen="1" reportAppUsage="1"
+              splashScreenColour="Dark" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.Newtonium" includeBinaryInAppConfig="1"
+              cppLanguageStandard="11" companyCopyright="" jucerVersion="5.2.0">
+  <MAINGROUP id="U3rl24" name="Newtonium">
+    <GROUP id="{126A2181-ECDA-1BA2-B6FF-E1923DB7DB41}" name="Source">
+      <FILE id="bPLVg7" name="SynthComponent.cpp" compile="1" resource="0"
+            file="Source/SynthComponent.cpp"/>
+      <FILE id="gKc7p3" name="SynthComponent.h" compile="0" resource="0"
+            file="Source/SynthComponent.h"/>
+      <FILE id="UB18SU" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="ssPXfi" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" enablePluginBinaryCopyStep="1" isDebug="1" optimisation="1"
+                       linkTimeOptimisation="0" targetName="Newtonium"/>
+        <CONFIGURATION name="Release" enablePluginBinaryCopyStep="1" isDebug="0" optimisation="3"
+                       linkTimeOptimisation="1" targetName="Newtonium"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../Dev/audio/JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <VS2017 targetFolder="Builds/VisualStudio2017">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
+                       linkTimeOptimisation="0" isDebug="1" optimisation="1" targetName="Newtonium"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
+                       linkTimeOptimisation="1" isDebug="0" optimisation="3" targetName="Newtonium"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../Dev/audio/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2017>
+    <VS2015 targetFolder="Builds/VisualStudio2015">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
+                       linkTimeOptimisation="0" isDebug="1" optimisation="1" targetName="Newtonium"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
+                       linkTimeOptimisation="1" isDebug="0" optimisation="3" targetName="Newtonium"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../Dev/audio/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2015>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" linkTimeOptimisation="0"
+                       targetName="Newtonium"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" linkTimeOptimisation="1"
+                       targetName="Newtonium"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../Dev/audio/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../Dev/audio/JUCE/modules"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS/>
+</JUCERPROJECT>
