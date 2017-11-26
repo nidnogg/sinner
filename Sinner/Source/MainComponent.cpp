@@ -2,58 +2,69 @@
 #define MAINCOMPONENT_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include <iostream>
+#include <fstream>
 #include <limits>
+using namespace std;
 
 //==============================================================================
 /*
- MainWindow > MainComponent
+                        Projeto Final de Cálculo Numérico
+                                    Sinner
+
+    Este arquivo, entitulado originalmente
+    MainComponent.cpp, é o responsável pelo processamento de áudio principal do Sinner.
+    Os padrões gerais de código -> indentação no estilo Allman, tabbeamento em 4 espaços, 
+    espaço antes de parêntesis preenchido, nomes de variáveis em camelCase foram todos
+    seguidos para máxima consistência e leitura do código.
+
+    Um guia geral sobre seu funcionamento:
+        O principal aqui é a classe MainContentComponent, que herda as classes AudioAppComponent, 
+        Slider::Listener e TextButton::Listener.
+        A primeira classe dessas herdadas, AudioAppComponent, traz os principais métodos usados no processamento
+        prepareToPlay(), releaseResources(), getNextAudioBlock(), shutdownAudio(), dentre outras.
+        
+        As outras duas, Slider::Listener e TextButton::Listener trazem callbacks que permitem interagir com os sliders
+        e os botões encontrados no aplicativo.
+
+        Cada um explicado devidamente abaixo.
+
+        O grosso do processamento de interpolação está definido dentro da função getNextAudioBlock().
  */
+//==============================================================================
 
-class Customized : public LookAndFeel_V4
-{
-public:
-    
-    void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
-                               bool isMouseOverButton, bool isButtonDown) override
-    {
-        Rectangle<int> buttonArea = button.getLocalBounds();
-        g.setColour (backgroundColour);
-        g.fillRect (buttonArea);
-    }
-    
-
-
-   };
 class MainContentComponent : public AudioAppComponent, public Slider::Listener, public TextButton::Listener
 {
 public:
-    //==============================================================================
+    //Construtor de MainContentComponent 
     MainContentComponent()
 
     {
-        setSize (600, 300);
+        //Dimensões
+        setSize (600, 250);
         
-        //Two output channels
+        //Usaremos dois canais - stereo
         setAudioChannels (0, 2);
         
-        setLookAndFeel (&visual);
-        //getLookAndFeel().setColour (Slider::thumbColourId, Colours::red);
-        //volumeSlider.setLookAndFeel (&visual);
         
-        //Volume Slider
-        addAndMakeVisible (volumeSlider);
-        volumeSlider.setRange (-96, 6);
-        volumeSlider.setTextValueSuffix (" db");
-        volumeSlider.setValue (-6);
-        volumeSlider.addListener (this);
-        volumeSlider.setSkewFactorFromMidPoint(0.5);
-        volumeLabel.setText ("Volume", dontSendNotification);
-        volumeLabel.attachToComponent (&volumeSlider, true);
+        //Slider de volume
+        addAndMakeVisible (volumeSlider);                     //Cria e mostra na tela com parâmetros do método resized()
+        volumeSlider.setRange (-96, 6);                       //Alcance do Slider
+        volumeSlider.setTextValueSuffix (" db");              //Sufixo do valor, nesse caso, decibéis
+        volumeSlider.setValue (-6);                           //Valor padrão
+        volumeSlider.addListener (this);                      //Adiciona listener para que funções callback saibam que ele existe
+        volumeSlider.setSkewFactorFromMidPoint(0.5);          //Esse é o valor que o meio do slider representa
+        volumeLabel.setText ("Volume", dontSendNotification); //Texto da etiqueta
+        volumeLabel.attachToComponent (&volumeSlider, true);  //Junta a etiqueta ao slider. True é onLeft, ou seja, à esquerda do slider
         
-        //Frequency Slider
+        //Slider de frequência - esse é o que será interpolado.
+        /*
+        O valor para o qual esse slider apontar será a frequência alvo (targetFrequency) que iremos usar na interpolação.
+        Serão encontrados pontos entre o valor atual da frequência e a frequência alvo pontos entre a função 
+        */
         addAndMakeVisible (freqSlider);
-        freqSlider.setRange (10, 20000);
-        freqSlider.setTextValueSuffix (" Hz");
+        freqSlider.setRange (10, 20000);            //Os atributos desse slider são definidos de maneira análoga ao de cima
+        freqSlider.setTextValueSuffix (" Hz");       
         freqSlider.setValue (500.0);
         freqSlider.addListener (this);
         freqSlider.setSkewFactorFromMidPoint (500);
@@ -61,58 +72,55 @@ public:
         freqLabel.attachToComponent (&freqSlider, true);
         
         //Mute Button
-        addAndMakeVisible (muteButton);
-        muteButton.setButtonText ("Mute");
-        muteButton.addListener (this);
-        muteButton.setEnabled (true);
+        addAndMakeVisible (muteButton);                     //Cria e mostra na tela com parâmetros do método resized()
+        muteButton.setButtonText ("Mute");                  //Texto do botão
+        muteButton.addListener (this);                      //Listener para Callbacks 
+        muteButton.setEnabled (true);                       //Comportamento padrão
         
         //Interpolate Button
-        addAndMakeVisible (interpolateButton);
+        addAndMakeVisible (interpolateButton);              //Esse botão toggleia a interpolação. O efeito é uma suavização na onda emitida
         interpolateButton.setButtonText ("Interpolate");
         interpolateButton.addListener (this);
         interpolateButton.setEnabled (true);
         
-        //Effect Button
-        addAndMakeVisible (effectButton);
-        effectButton.setButtonText ("Mystery Effect");
+        //Effect Button                           //Esse botão foi um efeito surpresa descoberto durante a implementação do método!
+        addAndMakeVisible (effectButton);         //Use com volume baixo! :)        
+        effectButton.setButtonText ("Mystery Effect (Make sure to lower the volume!)");
         effectButton.addListener (this);
         effectButton.setEnabled (true);
         
-        setWantsKeyboardFocus (true);
+        setWantsKeyboardFocus (true);             //Isso permite que a funçao keyPressed() use o teclado para as teclas do sintetizador
         
         
     }
-    
+    //Destrutor, desmonta o áudio quando fecha o arquivo
     ~MainContentComponent()
     {
         shutdownAudio();
     }
-    
-    float interpolate (float currentValue, float targetValue, float interval)
-    {
-    
-        float x0, x1;
-        
-        x0 = currentValue;
-        x1 = targetValue;
-        
-        return x0 * (1 - interval) + x1 * interval;
-        
-    }
-    
+    //Essa função verifica que teclas estão sendo pressionadas
     bool keyPressed (const KeyPress &k) override
     {
-        float previous = freqSlider.getValue();
+        /*
+        Como a frequência está diretamente atrelada ao tom, cada nota em 
+        cada instrumento musical possui um valor definido em hertz.
+
+        Tirando proveito disso, surge essa implementação aonde a seguir 
+        são definidas as frequências para a oitava do dó maior (middle C = C4) de um piano normal
+        seguindo o padrão encontrado no site Sengpiel Audio (ver referências - relatório)
+
+        É uma implementação grosseira de um teclado virtual, mas como sequer estamos 
+        usando MIDI (o padrão mais escalável no mercado para representar notas em computadores)
+        não precisamos de mais que isso :)
+
+        */
+
         float c4 = 261.62, c4s = 277.18, d4 = 293.66, d4s = 311.12, e4 = 329.62;
         float f4 = 349.22, f4s = 369.99, g4 = 391.99, g4s = 415.30;
         float a4 = 440.00, a4s =  466.16, b4 = 493.88, c5 = 523.25;
-        /*
-         float c4 = 261.626, c4s = 277.183, d4 = 293.665, d4s = 311.127, e4 = 329.628;
-         float f4 = 349.228, f4s = 369.994, g4 = 391.995, g4s = 415.305;
-         float a4 = 440.000, a4s =  466.164, b4 = 493.883;
-         */
+    
         
-        switch (k.getTextCharacter())
+        switch (k.getTextCharacter()) //k.getTextCharacter() retorna a tecla pressionada
         {
             case 'a' : freqSlider.setValue (c4);
                        break;
@@ -140,39 +148,40 @@ public:
                        break;
             case 'k' : freqSlider.setValue(c5);
                        break;
-            default :  freqSlider.setValue(0.0);
-                
-                
-    
+            default :  freqSlider.setValue(0.0); //Qualquer tecla não reconhecida retorna o tom para 0.0
+        
         }
         
     
         
     }
 
+    //Callback para quando o botão é clicado. Não funciona sem chamar a addListener() descrita no construtor de MainContentComponent
     void buttonClicked (Button* button) override
     {
-        //Only two buttons here, mute and interpolation for their respective toggling.
+        //Temos três botões na tela, um de mute, interpolação e um de efeitos. Nos ifs, são usados os seus endereços
         if (button == &muteButton)
         {
-            mute = !mute;
-            std::cout << "Mute: " << mute << std::endl;
+            mute = !mute;       //Variável booleana para representar estado mute
+            std::cout << "Mute: " << mute << std::endl; //Printa 1 no console para estado ativo, 0 para inativo
 
         }
         if (button == &interpolateButton)
         {
-            interpolating = !interpolating; //starts as 1
+            interpolating = !interpolating; //Similar à cima
             std::cout << "Interpolating: " << interpolating << std::endl;
 
         }
         if (button == &effectButton)
         {
-            effect = !effect;
+            effect = !effect;  //Similar à cima
             std::cout << "Effect: " << effect << std::endl;
         }
         
     }
     
+
+    //Callback para quando o valor do Slider é alterado. Não funciona sem chamar a addListener() descrita no construtor de MainContentComponent
     void sliderValueChanged (Slider *slider) override
     {
         if (slider == &volumeSlider)
@@ -198,33 +207,47 @@ public:
       
     }
     
-    //==============================================================================
+    /*
+    Essa função é chamada antes da saída de áudio iniciar, ou quando altera-se a sample rate | buffer size.
+
+    Lembrando um pouco do funcionamento base descrito no relatório, para sintetizar o som, ele é convertido para amostras
+    discretas (samples) carregadas em buffers de um tamanho determinado (o block size) que serão propagados nos canais 
+    de áudio do computador.
+
+    A sample rate é a taxa de amostragem, ou seja, quantas samples serão emitidas por segundo.
+    O block size, medido em bits, dita o tamanho do buffer de amostras que iremos preencher 
+    com amostras processadas. Por exemplo, se temos um buffer size hipotético de 441 bits,
+    e uma sample rate de 44100hz (padrão CD-ROM, usada no Sinner)
+    caberão 441 samples em um buffer. Logo, a função de preencher o buffer com samples 
+    será chamada 100 vezes por segundo!
+    */
+   
     void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override
-    {
-        // This function will be called when the audio device is started, or when
-        // its settings (i.e. sample rate, block size, etc) are changed.
-        // You can use this function to initialise any resources you might need,
-        // but be careful - it will be called on the audio thread, not the GUI thread.
-        // For more details, see the help for AudioProcessor::prepareToPlay()
+    {     
+        amplitude = 0.5;                                        //Amplitude inicial da onda seno 
+        targetAmplitude = amplitude;                            //Amplitude alvo (oriunda do slider)
+        frequency = 500.0;                                      //Frequencia inicial
+        targetFrequency = frequency;                            //Frequênca alvo (oriunda do slider) - destino da interpolação
+        time = 0.0;                                             //Tempo medido em millisegundos
+        timeDelta = 1 / sampleRate;                             //Tempo entre cada sample, usado como contador | incremento
+        currentSampleRate = sampleRate;                         //SampleRate atual
+        interpolationLength = currentSampleRate * 0.100;            
+        angle  = 0.0;                                           //Ângulo inicial. Ele será atualizado para cada amostra.
         
-        amplitude = 0.5;
-        targetAmplitude = amplitude;
-        frequency = 500.0;
-        targetFrequency = frequency;
-        time = 0.0;
-        phase = 0.0;
-        timeDelta = 1 / sampleRate;
-        currentSampleRate = sampleRate;
-        interpolationLength = currentSampleRate * 0.100;
-        //for TESTEXT
-        angle  = 0.0;
-        
+        /*
+        f.open ("data.txt", ios::out);
+        if (f.is_open()) cout << "File succesfully opened!\n";
+        */
     }
-    
+    /*
+    Nessa função ocorre o processamento de áudio. Ela recebe um buffer que será preenchido por samples,
+    que nesse caso é de tamanho 512 bits. A cada segundo, essa função será chamada cerca de 86 vezes para
+    preencher a samplerate de 44100 samples por segundo! 
+    */
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override
     {
-       // freopen ("~/Google Drive/@2017-2/sinner/Reference/data.txt", "w", stdout);
-       // String filepath = "~/Google Drive/@2017-2/newtonium/Documentation/data.txt";
+      
+       // freopen ("data.txt", "w", stdout);
        // File f (filepath);
         
         //Loops time if it gets to numeric limits
@@ -251,7 +274,8 @@ public:
                 time += timeDelta;
                 
                 //Diagnostics
-                //printf ("regular sample: (%f %f)\n", sampleFail, time);
+                f << "Regular sample: "<< sampleFail << " " << time << endl;
+              //  printf ("regular sample: %f %f\n", sampleFail, time);
                 //std::cout << "Does file exist lel" << f.exists() << std::endl;
                 //printf("frequency %f\n", localTargetFrequency);
                 //printf("amplitude %f\n", targetAmplitude);
@@ -272,6 +296,7 @@ public:
                     time += timeDelta;
                     
                     //Diagnostics
+                    f << "Non-moving sample: " << curSample << " " << time << endl;
                     // printf ("non-moving sample: (%f %f)\n", curSample, time);
                     // printf("frequency interpolating %f\n", frequency);
                     // printf("amplitude interpolating %f\n", targetAmplitude);
@@ -291,6 +316,8 @@ public:
                     time += timeDelta;
                     
                     //Diagnostics
+                    f << "Moving sample: "<< curSample << " " << time << endl;
+                    
                     // printf ("moving sample: (%f %f)\n", curSample, time);
                     // printf("frequency interpolating %f\n", frequency);
                     // printf("amplitude interpolating %f\n", targetAmplitude);
@@ -353,6 +380,7 @@ public:
                // std::cout << "buffer[sample]: " << buffer[sample] << " sample: " << sample << std::endl;
             }
         }
+     
     }
     
     void updateAngleDelta()
@@ -362,6 +390,7 @@ public:
     }
     void releaseResources() override
     {
+      
     }
     
     float interpolate (float sample, float numSamples, float curVal, float targetVal, float timeDelta)
@@ -418,7 +447,10 @@ private:
     bool effect;
     
     //Look and Feel
-    Customized visual;
+    //Customized visual;
+    
+    ofstream f;
+    
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainContentComponent)
 };
