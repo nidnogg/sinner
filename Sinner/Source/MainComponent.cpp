@@ -12,38 +12,18 @@
 class Customized : public LookAndFeel_V4
 {
 public:
-    Customized()
+    
+    void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
+                               bool isMouseOverButton, bool isButtonDown) override
     {
-        setColour (Slider::thumbColourId, Colours::red);
+        Rectangle<int> buttonArea = button.getLocalBounds();
+        g.setColour (backgroundColour);
+        g.fillRect (buttonArea);
     }
     
-    void drawRotarySlider (Graphics& g, int x, int y, int width, int height, float sliderPos,
-                           const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider) override
-    {
-        const float radius = jmin (width / 2, height / 2) - 4.0f;
-        const float centreX = x + width * 0.5f;
-        const float centreY = y + height * 0.5f;
-        const float rx = centreX - radius;
-        const float ry = centreY - radius;
-        const float rw = radius * 2.0f;
-        const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
-        
-        g.setColour (Colours::orange);
-        g.fillEllipse (rx, ry, rw, rw);
-        
-        g.setColour (Colours::red);
-        g.drawEllipse (rx, ry, rw, rw, 1.0f);
-        
-        Path p;
-        const float pointerLength = radius * 0.33f;
-        const float pointerThickness = 2.0f;
-        p.addRectangle (-pointerThickness * 0.5f, -radius, pointerThickness, pointerLength);
-        p.applyTransform (AffineTransform::rotation (angle).translated (centreX, centreY));
-        g.setColour (Colours::yellow);
-        g.fillPath (p);
-        
-    }
-};
+
+
+   };
 class MainContentComponent : public AudioAppComponent, public Slider::Listener, public TextButton::Listener
 {
 public:
@@ -70,7 +50,6 @@ public:
         volumeLabel.setText ("Volume", dontSendNotification);
         volumeLabel.attachToComponent (&volumeSlider, true);
         
-        
         //Frequency Slider
         addAndMakeVisible (freqSlider);
         freqSlider.setRange (10, 20000);
@@ -80,7 +59,6 @@ public:
         freqSlider.setSkewFactorFromMidPoint (500);
         freqLabel.setText ("Freq", dontSendNotification);
         freqLabel.attachToComponent (&freqSlider, true);
-        
         
         //Mute Button
         addAndMakeVisible (muteButton);
@@ -124,22 +102,54 @@ public:
     
     bool keyPressed (const KeyPress &k) override
     {
-        if (k.getTextCharacter() == 'q')
-            printf("q\n");
-        if (k.getTextCharacter() == 'w')
-            printf("w\n");
-        if (k.getTextCharacter() == 'e')
-            printf("e\n");
-        if (k.getTextCharacter() == 'r')
-            printf("r\n");
-        if (k.getTextCharacter() == 't')
-            printf("t\n");
-        if (k.getTextCharacter() == 'y')
-            printf("y\n");
+        float previous = freqSlider.getValue();
+        float c4 = 261.62, c4s = 277.18, d4 = 293.66, d4s = 311.12, e4 = 329.62;
+        float f4 = 349.22, f4s = 369.99, g4 = 391.99, g4s = 415.30;
+        float a4 = 440.00, a4s =  466.16, b4 = 493.88, c5 = 523.25;
+        /*
+         float c4 = 261.626, c4s = 277.183, d4 = 293.665, d4s = 311.127, e4 = 329.628;
+         float f4 = 349.228, f4s = 369.994, g4 = 391.995, g4s = 415.305;
+         float a4 = 440.000, a4s =  466.164, b4 = 493.883;
+         */
         
+        switch (k.getTextCharacter())
+        {
+            case 'a' : freqSlider.setValue (c4);
+                       break;
+            case 's' : freqSlider.setValue (d4);
+                       break;
+            case 'd' : freqSlider.setValue (e4);
+                       break;
+            case 'w' : freqSlider.setValue (c4s);
+                       break;
+            case 'e' : freqSlider.setValue (d4s);
+                       break;
+            case 'f' : freqSlider.setValue (f4);
+                       break;
+            case 't' : freqSlider.setValue(f4s);
+                       break;
+            case 'g' : freqSlider.setValue(g4);
+                       break;
+            case 'y' : freqSlider.setValue(g4s);
+                       break;
+            case 'h' : freqSlider.setValue(a4);
+                       break;
+            case 'u' : freqSlider.setValue(a4s);
+                       break;
+            case 'j' : freqSlider.setValue(b4);
+                       break;
+            case 'k' : freqSlider.setValue(c5);
+                       break;
+            default :  freqSlider.setValue(0.0);
+                
+                
+    
+        }
+        
+    
         
     }
-    
+
     void buttonClicked (Button* button) override
     {
         //Only two buttons here, mute and interpolation for their respective toggling.
