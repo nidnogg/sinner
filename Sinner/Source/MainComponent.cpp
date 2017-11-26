@@ -8,18 +8,57 @@
 /*
  MainWindow > MainComponent
  */
+
+class Customized : public LookAndFeel_V4
+{
+public:
+    Customized()
+    {
+        setColour (Slider::thumbColourId, Colours::red);
+    }
+    
+    void drawRotarySlider (Graphics& g, int x, int y, int width, int height, float sliderPos,
+                           const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider) override
+    {
+        const float radius = jmin (width / 2, height / 2) - 4.0f;
+        const float centreX = x + width * 0.5f;
+        const float centreY = y + height * 0.5f;
+        const float rx = centreX - radius;
+        const float ry = centreY - radius;
+        const float rw = radius * 2.0f;
+        const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
+        
+        g.setColour (Colours::orange);
+        g.fillEllipse (rx, ry, rw, rw);
+        
+        g.setColour (Colours::red);
+        g.drawEllipse (rx, ry, rw, rw, 1.0f);
+        
+        Path p;
+        const float pointerLength = radius * 0.33f;
+        const float pointerThickness = 2.0f;
+        p.addRectangle (-pointerThickness * 0.5f, -radius, pointerThickness, pointerLength);
+        p.applyTransform (AffineTransform::rotation (angle).translated (centreX, centreY));
+        g.setColour (Colours::yellow);
+        g.fillPath (p);
+        
+    }
+};
 class MainContentComponent : public AudioAppComponent, public Slider::Listener, public TextButton::Listener
 {
 public:
     //==============================================================================
     MainContentComponent()
-    //:freqSmooth (currentSampleRate)
 
     {
         setSize (600, 300);
         
         //Two output channels
         setAudioChannels (0, 2);
+        
+        setLookAndFeel (&visual);
+        //getLookAndFeel().setColour (Slider::thumbColourId, Colours::red);
+        //volumeSlider.setLookAndFeel (&visual);
         
         //Volume Slider
         addAndMakeVisible (volumeSlider);
@@ -42,9 +81,6 @@ public:
         freqLabel.setText ("Freq", dontSendNotification);
         freqLabel.attachToComponent (&freqSlider, true);
         
-        
-        //smoother
-       // freqSmooth (frequency);
         
         //Mute Button
         addAndMakeVisible (muteButton);
@@ -167,17 +203,17 @@ public:
         targetFrequency = frequency;
         time = 0.0;
         phase = 0.0;
-        deltaTime = 1 / sampleRate;
+        timeDelta = 1 / sampleRate;
         currentSampleRate = sampleRate;
         interpolationLength = currentSampleRate * 0.100;
         //for TESTEXT
-        currentAngle  = 0.0;
+        angle  = 0.0;
         
     }
     
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override
     {
-        //freopen ("~/Google Drive/@2017-2/newtonium/Documentation/data.txt", "w", stdout);
+       // freopen ("~/Google Drive/@2017-2/sinner/Reference/data.txt", "w", stdout);
        // String filepath = "~/Google Drive/@2017-2/newtonium/Documentation/data.txt";
        // File f (filepath);
         
@@ -196,75 +232,102 @@ public:
     
         if (mute) return bufferToFill.clearActiveBufferRegion();
     
-        if (!interpolating)
+        if (!interpolating && !effect)
         {
             for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
             {
                 sampleFail = targetAmplitude * std::sin(2 * double_Pi * localTargetFrequency * time);
                 monoBuffer[sample] = sampleFail;
-                time += deltaTime;
+                time += timeDelta;
                 
                 //Diagnostics
-                //String interpol
-               // f.appendText ("regular sample: (%f %f)\n", sampleFail, time);
+                //printf ("regular sample: (%f %f)\n", sampleFail, time);
                 //std::cout << "Does file exist lel" << f.exists() << std::endl;
-                //printf("current value %F\n", value);
                 //printf("frequency %f\n", localTargetFrequency);
                 //printf("amplitude %f\n", targetAmplitude);
             }
         }
-        else if (interpolating)
+        else if (interpolating && (effect == false))
         {
             //no need to smooth if it's the same
             if (localTargetFrequency == frequency)
             {
                 
-                //TESTEXTdouble angle =  2.0f * double_Pi * (frequency / currentSampleRate);
                 for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
                 {
-                    const float curSample = (float) std::sin (currentAngle);
-                    currentAngle += angleDelta;
+                    const float curSample = (float) std::sin (angle);
+                    angle += angleDelta;
                     monoBuffer[sample] = targetAmplitude * curSample;
                     updateAngleDelta();
-                    time += deltaTime;
+                    time += timeDelta;
                     
                     //Diagnostics
-                 //   f.appendText("non-moving sample: (%f %f)\n", curSample, time);
+                    // printf ("non-moving sample: (%f %f)\n", curSample, time);
                     // printf("frequency interpolating %f\n", frequency);
                     // printf("amplitude interpolating %f\n", targetAmplitude);
                 }
             }
             else
             {
-                //TESTEXTdouble frequencyDelta = (localTargetFrequency - frequency) / bufferToFill.numSamples;
-                //TESTEXTdouble angle =  2 * double_Pi * (frequency / currentSampleRate);
+               
                 const double frequencyDelta = (localTargetFrequency - frequency) / bufferToFill.numSamples;
                 for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
                 {
-                    const float curSample = (float) std::sin (currentAngle);
+                    const float curSample = (float) std::sin (angle);
                     frequency += frequencyDelta;
                     updateAngleDelta();
-                    currentAngle += angleDelta;
+                    angle += angleDelta;
                     monoBuffer[sample] = targetAmplitude * curSample;
-                    time += deltaTime;
-                    //TESTEXTfloat curSample = (float) std::sin (angle);
-                    //TESTEXTfrequency += frequencyDelta;
-                    //TESTEXTfloat sampleDelta = 2.0 * double_Pi * (frequency / currentSampleRate);
-                    //TESTEXTangle += sampleDelta;
-                    //TESTEXTmonoBuffer[sample] = targetAmplitude * curSample;
-                    //TESTEXTtime += deltaTime;
+                    time += timeDelta;
                     
                     //Diagnostics
-                 //  f.appendText("moving sample: (%f %f)\n", curSample, time);
-                   // printf("frequency interpolating %f\n", frequency);
-                   // printf("amplitude interpolating %f\n", targetAmplitude);
+                    // printf ("moving sample: (%f %f)\n", curSample, time);
+                    // printf("frequency interpolating %f\n", frequency);
+                    // printf("amplitude interpolating %f\n", targetAmplitude);
                     
                 }
                 frequency = localTargetFrequency;
             }
         }
-        else if (effect)
+        else if (effect && (interpolating == false))
         {
+            if (localTargetFrequency == frequency)
+            {
+                double angle =  2 * double_Pi * (frequency / currentSampleRate);
+                for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
+                {
+                    float curSample = (float) std::sin (angle);
+                    float sampleDelta = 2.0 * double_Pi * (frequency / currentSampleRate);
+                    angle += sampleDelta;
+                    monoBuffer[sample] = curSample;
+                    time += timeDelta;
+                    //Diagnostics
+                    //printf("curSample %f\n", curSample);
+                    
+                }
+            }
+            else  //interpolation goes here
+            {
+                double frequencyDelta = (localTargetFrequency - frequency) / bufferToFill.numSamples;
+                double angle =  2 * double_Pi * (frequency / currentSampleRate);
+                for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
+                {
+                    float curSample = (float) std::sin (angle);
+                    frequency += frequencyDelta;
+                    float sampleDelta = 2.0 * double_Pi * (frequency / currentSampleRate);
+                    angle += sampleDelta;
+                    monoBuffer[sample] = targetAmplitude * curSample;
+                    time += timeDelta;
+                  //  printf("curSample %f\n", curSample);
+                    
+                }
+            }
+        }
+        else
+        {
+            printf("Error! Setting buttons to defaults.\n");
+            interpolating = false;
+            effect = false;
             
         }
         // iterate over all available output channels
@@ -291,7 +354,7 @@ public:
     {
     }
     
-    float interpolate (float sample, float numSamples, float curVal, float targetVal, float deltaTime)
+    float interpolate (float sample, float numSamples, float curVal, float targetVal, float timeDelta)
     {
         float increment = (curVal + targetVal) / numSamples;
         return curVal += increment;
@@ -321,16 +384,16 @@ public:
 private:
     //==============================================================================
     
-    // Your private member variables go here...
+    // Member Variables
     float currentSampleRate;
     float amplitude, targetAmplitude;
     float frequency, targetFrequency;
     float time;
     float phase;
-    float deltaTime;
+    float timeDelta;
     float interpolationLength;
     float frac;
-    float angleDelta, currentAngle;
+    float angleDelta, angle;
     // GUI
     Slider volumeSlider;
     Slider freqSlider;
@@ -343,6 +406,9 @@ private:
     bool mute;
     bool interpolating;
     bool effect;
+    
+    //Look and Feel
+    Customized visual;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainContentComponent)
 };

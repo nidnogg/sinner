@@ -1,4 +1,4 @@
-nopenopenoep![](/Info/Logotipos e Banners/hivemind-git-banner.jpg)
+![](/Resources/img/git-banner.png)
 
 # Sinner
 
