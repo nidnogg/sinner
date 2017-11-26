@@ -1,0 +1,20 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2015
+
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sinner - App", "Sinner_App.vcxproj", "{B8B402E2-7088-8C0C-CBB9-AD0F6516B795}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B8B402E2-7088-8C0C-CBB9-AD0F6516B795}.Debug|x64.ActiveCfg = Debug|x64
+		{B8B402E2-7088-8C0C-CBB9-AD0F6516B795}.Debug|x64.Build.0 = Debug|x64
+		{B8B402E2-7088-8C0C-CBB9-AD0F6516B795}.Release|x64.ActiveCfg = Release|x64
+		{B8B402E2-7088-8C0C-CBB9-AD0F6516B795}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
