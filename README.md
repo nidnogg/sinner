@@ -1,4 +1,4 @@
-![](/Resources/img/git-banner.jpg)
+![](Resources/img/git-banner.jpg)
 
 # Sinner
 
