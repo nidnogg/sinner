@@ -373,7 +373,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\MainComponent.cpp">
+    <ClCompile Include="..\..\Source\116076549-henriqueComp.cpp">
       <Filter>Sinner\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Main.cpp">

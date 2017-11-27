@@ -6,8 +6,8 @@
               cppLanguageStandard="11" companyCopyright="" jucerVersion="5.2.0">
   <MAINGROUP id="U3rl24" name="Sinner">
     <GROUP id="{126A2181-ECDA-1BA2-B6FF-E1923DB7DB41}" name="Source">
-      <FILE id="klMSV3" name="MainComponent.cpp" compile="1" resource="0"
-            file="Source/MainComponent.cpp"/>
+      <FILE id="klMSV3" name="116076549-henriqueComp.cpp" compile="1" resource="0"
+            file="Source/116076549-henriqueComp.cpp"/>
       <FILE id="ssPXfi" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     </GROUP>
   </MAINGROUP>
