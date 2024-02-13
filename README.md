@@ -1,8 +1,18 @@
-![](./Resources/img/git-banner.jpg)
+<div align="center">
+<img src="./Resources/img/git-banner.jpg">
+ 
+![License](https://img.shields.io/github/license/nidnogg/sinner?style=for-the-badge)
+![Size](https://img.shields.io/github/repo-size/nidnogg/sinner?color=orange&logo=rust&style=for-the-badge)
+![Stars](https://img.shields.io/github/stars/nidnogg/sinner?color=red&style=for-the-badge)
+<br />
+macOS  • Windows 
+<br />
+</div>
+
 
 # About
 
-Sinner _(pronounced SAH-IH-NER)_ is a sine wave synthesizer designed to showcase Linear Interpolation 
+Sinner 🎹 _(pronounced SAH-IH-NER)_ is a sine wave synthesizer designed to showcase Linear Interpolation 
 using JUCE and C++. There's also a neat metallic effect discovered during development.
  
 ## How to run:
